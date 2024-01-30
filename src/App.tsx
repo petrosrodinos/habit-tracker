@@ -11,7 +11,7 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { ellipse, square, triangle } from "ionicons/icons";
+import { statsChartOutline, listOutline, calendarOutline } from "ionicons/icons";
 import Activities from "./pages/Activities";
 import ToDo from "./pages/ToDo";
 import Stats from "./pages/Stats";
@@ -57,15 +57,15 @@ const App: React.FC = () => (
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/activities">
-            <IonIcon aria-hidden="true" icon={triangle} />
+            <IonIcon aria-hidden="true" icon={listOutline} />
             <IonLabel>Activities</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab2" href="/todo">
-            <IonIcon aria-hidden="true" icon={ellipse} />
+            <IonIcon aria-hidden="true" icon={calendarOutline} />
             <IonLabel>To do</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab3" href="/stats">
-            <IonIcon aria-hidden="true" icon={square} />
+            <IonIcon aria-hidden="true" icon={statsChartOutline} />
             <IonLabel>Stats</IonLabel>
           </IonTabButton>
         </IonTabBar>
