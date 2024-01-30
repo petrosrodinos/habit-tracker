@@ -1,4 +1,4 @@
-export interface NewActivity {
+export interface Activity {
   name: string;
   description?: string;
   days: Day[];

@@ -16,8 +16,8 @@ const Day: FC<DayProps> = ({ day, onChange }) => {
   };
 
   const handletimeChange = (e: any) => {
-    console.log("e", e.detail.value);
-    onChange({ ...day, time: e.detail.value });
+    const time = e.detail.value;
+    onChange({ ...day, time });
   };
   return (
     <>

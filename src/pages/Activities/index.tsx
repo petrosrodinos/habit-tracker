@@ -26,29 +26,17 @@ import {
 } from "ionicons/icons";
 import CreateActivity from "./CreateActivity";
 import DeleteActivity from "./DeleteActivity";
-
-const items = [
-  {
-    name: "Cleaning",
-    created: "2021-01-01",
-    days: [],
-  },
-  {
-    name: "Cooking",
-    created: "2021-01-01",
-    days: [],
-  },
-  {
-    name: "Shopping",
-    created: "2021-01-01",
-    days: [],
-  },
-];
+import { Activity } from "../../interfaces/activity";
 
 const Activities: React.FC = () => {
-  const [selectedActivity, setSelectedActivity] = useState(items[0]); // [1
+  const [selectedActivity, setSelectedActivity] = useState<Activity>();
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleCreateActivity = (activity: Activity) => {
+    setActivities([...activities, activity]);
+  };
 
   const toggleCreating = () => {
     setIsCreating(!isCreating);
@@ -63,6 +51,17 @@ const Activities: React.FC = () => {
     toggleCreating();
   };
 
+  const handleDeleteActivity = (item: any) => {
+    setSelectedActivity(item);
+    toggleDeleting();
+  };
+
+  const openNewActivityModal = () => {
+    setSelectedActivity(undefined);
+
+    toggleCreating();
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -74,13 +73,22 @@ const Activities: React.FC = () => {
         <CreateActivity
           activity={selectedActivity}
           isOpen={isCreating}
-          setIsOpen={toggleCreating}
+          onClose={toggleCreating}
+          onCreate={handleCreateActivity}
         />
-        <DeleteActivity isOpen={isDeleting} setIsOpen={toggleDeleting} />
+        <DeleteActivity activity={selectedActivity} isOpen={isDeleting} onClose={toggleDeleting} />
+        {activities.length === 0 && (
+          <div style={{ marginTop: "20px", marginLeft: "20px" }}>
+            <IonLabel>Click the add button to create an activity</IonLabel>
+          </div>
+        )}
         <IonList inset={true}>
-          {items.map((item, index) => (
+          {activities.map((item, index) => (
             <IonItem key={index}>
-              <IonLabel>{item.name}</IonLabel>
+              <div>
+                <IonLabel>{item.name}</IonLabel>
+                <IonNote>{item.description}</IonNote>
+              </div>
               <IonIcon
                 onClick={() => handleSelectActivity(item)}
                 className="activity-btn"
@@ -91,7 +99,7 @@ const Activities: React.FC = () => {
               />
 
               <IonIcon
-                onClick={toggleDeleting}
+                onClick={() => handleDeleteActivity(item)}
                 color="danger"
                 slot="end"
                 aria-hidden="true"
@@ -102,7 +110,7 @@ const Activities: React.FC = () => {
           ))}
         </IonList>
 
-        <IonFab onClick={toggleCreating} slot="fixed" vertical="bottom" horizontal="end">
+        <IonFab onClick={openNewActivityModal} slot="fixed" vertical="bottom" horizontal="end">
           <IonFabButton>
             <IonIcon icon={addOutline}></IonIcon>
           </IonFabButton>
