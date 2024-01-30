@@ -1,0 +1,7 @@
+{
+  "name": "habit-tracker",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
