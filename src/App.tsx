@@ -34,44 +34,58 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import Auth from "./pages/Auth";
+import { authStore } from "./store/auth";
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/activities">
-            <Activities />
-          </Route>
-          <Route exact path="/todo">
-            <ToDo />
-          </Route>
-          <Route path="/stats">
-            <Stats />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/todo" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/activities">
-            <IonIcon aria-hidden="true" icon={listOutline} />
-            <IonLabel>Activities</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/todo">
-            <IonIcon aria-hidden="true" icon={calendarOutline} />
-            <IonLabel>To do</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/stats">
-            <IonIcon aria-hidden="true" icon={statsChartOutline} />
-            <IonLabel>Stats</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
+const App: React.FC = () => {
+  const { isLoggedIn } = authStore((state) => state);
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route exact path="/">
+              <Redirect to={isLoggedIn ? "/todo" : "/auth"} />
+            </Route>
+            {!isLoggedIn && (
+              <Route exact path="/auth">
+                <Auth />
+              </Route>
+            )}
+            {/* {isLoggedIn && ( */}
+            <>
+              <Route exact path="/activities">
+                <Activities />
+              </Route>
+              <Route exact path="/todo">
+                <ToDo />
+              </Route>
+              <Route path="/stats">
+                <Stats />
+              </Route>
+            </>
+            {/* )} */}
+          </IonRouterOutlet>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="tab1" href="/activities">
+              <IonIcon aria-hidden="true" icon={listOutline} />
+              <IonLabel>Activities</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="tab2" href="/todo">
+              <IonIcon aria-hidden="true" icon={calendarOutline} />
+              <IonLabel>To do</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="tab3" href="/stats">
+              <IonIcon aria-hidden="true" icon={statsChartOutline} />
+              <IonLabel>Stats</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;

@@ -43,11 +43,10 @@ const ToDo: FC = () => {
   }
 
   function handleItemCompleted(item: ItemType) {
-    setState((state) => {
-      const itemIndex = state.findIndex((i) => i.id === item.id);
-      state[itemIndex].completed = !state[itemIndex].completed;
-      return state.slice();
-    });
+    const newItems = [...state];
+    const itemIndex = newItems.findIndex((i) => i.id === item.id);
+    newItems[itemIndex].completed = !state[itemIndex].completed;
+    setState(newItems);
   }
 
   useEffect(() => {
@@ -65,12 +64,17 @@ const ToDo: FC = () => {
         <IonList>
           <IonReorderGroup disabled={false} onIonItemReorder={handleReorder}>
             {state
-              .filter((item) => !item.completed)
+              // .filter((item) => !item.completed)
               .map((item, index) => (
                 <IonItem key={index}>
                   <IonReorder slot="start"></IonReorder>
-                  <IonLabel>{item.name}</IonLabel>
-                  <IonCheckbox checked={item.completed} onClick={() => handleItemCompleted(item)} />
+                  <IonLabel className={`${item.completed ? "item-completed" : ""}`}>
+                    {item.name}
+                  </IonLabel>
+                  <IonCheckbox
+                    checked={item.completed}
+                    onIonChange={() => handleItemCompleted(item)}
+                  />
                 </IonItem>
               ))}
           </IonReorderGroup>
