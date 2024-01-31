@@ -1,15 +1,12 @@
 import React from "react";
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { IonContent, IonPage } from "@ionic/react";
+import Header from "../../components/Header";
 import "./style.css";
 
 const Stats: React.FC = () => {
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Stats</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header title="Stats" />
       <IonContent fullscreen></IonContent>
     </IonPage>
   );

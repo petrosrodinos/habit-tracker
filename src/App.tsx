@@ -44,18 +44,21 @@ const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
-        <IonTabs>
-          <IonRouterOutlet>
-            <Route exact path="/">
-              <Redirect to={isLoggedIn ? "/todo" : "/auth"} />
-            </Route>
-            {/* {!isLoggedIn && ( */}
-            <Route exact path="/auth">
-              <Auth />
-            </Route>
-            {/* )} */}
-            {/* {isLoggedIn && ( */}
-            <>
+        <Route exact path="/">
+          <Redirect to={isLoggedIn ? "/todo" : "/auth"} />
+        </Route>
+        {!isLoggedIn && (
+          <Route exact path="/auth">
+            <Auth />
+          </Route>
+        )}
+        {isLoggedIn && (
+          <IonTabs>
+            <IonRouterOutlet>
+              <Route exact path="/">
+                <Redirect to="/todo" />
+              </Route>
+
               <Route exact path="/activities">
                 <Activities />
               </Route>
@@ -65,24 +68,23 @@ const App: React.FC = () => {
               <Route path="/stats">
                 <Stats />
               </Route>
-            </>
-            {/* )} */}
-          </IonRouterOutlet>
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="tab1" href="/activities">
-              <IonIcon aria-hidden="true" icon={listOutline} />
-              <IonLabel>Activities</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="tab2" href="/todo">
-              <IonIcon aria-hidden="true" icon={calendarOutline} />
-              <IonLabel>To do</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="tab3" href="/stats">
-              <IonIcon aria-hidden="true" icon={statsChartOutline} />
-              <IonLabel>Stats</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
+            </IonRouterOutlet>
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="tab1" href="/activities">
+                <IonIcon aria-hidden="true" icon={listOutline} />
+                <IonLabel>Activities</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tab2" href="/todo">
+                <IonIcon aria-hidden="true" icon={calendarOutline} />
+                <IonLabel>To do</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tab3" href="/stats">
+                <IonIcon aria-hidden="true" icon={statsChartOutline} />
+                <IonLabel>Stats</IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          </IonTabs>
+        )}
       </IonReactRouter>
     </IonApp>
   );

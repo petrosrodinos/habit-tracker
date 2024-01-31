@@ -27,6 +27,7 @@ import {
 import CreateActivity from "./CreateActivity";
 import DeleteActivity from "./DeleteActivity";
 import { Activity } from "../../interfaces/activity";
+import Header from "../../components/Header";
 
 const Activities: React.FC = () => {
   const [selectedActivity, setSelectedActivity] = useState<Activity>();
@@ -64,11 +65,7 @@ const Activities: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Activities</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header title="Activities" />
       <IonContent fullscreen>
         <CreateActivity
           activity={selectedActivity}

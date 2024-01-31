@@ -1,23 +1,16 @@
 import React, { FC, useState, useEffect } from "react";
 import {
   IonContent,
-  IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
   IonItem,
   IonLabel,
   IonList,
   IonCheckbox,
-  IonIcon,
-  IonToggle,
-  IonNote,
   IonReorder,
   IonReorderGroup,
   ItemReorderEventDetail,
 } from "@ionic/react";
-import { ReactSortable } from "react-sortablejs";
-import { airplane } from "ionicons/icons";
+import Header from "../../components/Header";
 import "./style.css";
 
 interface ItemType {
@@ -49,17 +42,9 @@ const ToDo: FC = () => {
     setState(newItems);
   }
 
-  useEffect(() => {
-    console.log("state", state);
-  }, []);
-
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Todos</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header title="Todos" />
       <IonContent fullscreen>
         <IonList>
           <IonReorderGroup disabled={false} onIonItemReorder={handleReorder}>
