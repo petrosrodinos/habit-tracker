@@ -11,6 +11,7 @@ import {
 import { powerOutline } from "ionicons/icons";
 import React, { FC } from "react";
 import { authStore } from "../../store/auth";
+import { activityStore } from "../../store/activity";
 import { logoutUser } from "../../services/auth";
 import { useHistory } from "react-router";
 
@@ -19,11 +20,13 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ title }) => {
+  const { emptyActivities } = activityStore();
   const location = useHistory();
   const { avatar, logOut } = authStore((state) => state);
 
   const handleLogOut = () => {
     logOut();
+    emptyActivities();
     logoutUser();
     location.replace("/auth");
   };

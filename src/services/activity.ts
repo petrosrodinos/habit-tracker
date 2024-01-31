@@ -2,7 +2,7 @@ import { Activity } from "../interfaces/activity";
 import { db } from "../utils/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 
-export const createActivity = async ({
+export const setActivities = async ({
   userId,
   activities,
 }: {

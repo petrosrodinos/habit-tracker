@@ -3,11 +3,13 @@ import Google from "../../components/Google";
 import { signInWithGoogle } from "../../services/auth";
 import { addNewUser } from "../../services/user";
 import { authStore } from "../../store/auth";
+import { activityStore } from "../../store/activity";
 import { useHistory } from "react-router";
 
 const Auth: FC = () => {
   const location = useHistory();
   const { logIn } = authStore();
+  const { setActivities } = activityStore();
   const handleGoogleSignIn = async () => {
     try {
       signInWithGoogle().then(async (res) => {
@@ -22,6 +24,7 @@ const Auth: FC = () => {
     try {
       const loggedUser = await addNewUser(user);
       logIn(loggedUser);
+      setActivities(loggedUser.activities);
       location.push("/todo");
     } catch (error) {
       console.log(error);

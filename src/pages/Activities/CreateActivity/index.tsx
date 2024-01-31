@@ -16,8 +16,9 @@ import {
 import Day from "./Day";
 import { Activity, Day as DayInt } from "../../../interfaces/activity";
 import { useMutation } from "react-query";
-import { createActivity } from "../../../services/activity";
+import { setActivities } from "../../../services/activity";
 import { authStore } from "../../../store/auth";
+import { activityStore } from "../../../store/activity";
 import { v4 as uuidv4 } from "uuid";
 
 interface CreateActivityProps {
@@ -85,11 +86,12 @@ interface Alert {
 }
 
 const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, onCreate }) => {
-  const { userId, activities, addActivity } = authStore((state) => state);
+  const { userId } = authStore((state) => state);
+  const { activities, addActivity, editActivity } = activityStore((state) => state);
   const [newActivity, setNewActivity] = useState<Activity>(emptyActivity);
   const [alert, setAlert] = useState<Alert>();
 
-  const { mutate: addActivityMutation } = useMutation(createActivity);
+  const { mutate: setActivitiesMutation } = useMutation(setActivities);
 
   useEffect(() => {
     if (activity) {
@@ -114,7 +116,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, on
       activities: [...activities, newActivity],
       userId: userId,
     };
-    addActivityMutation(payload, {
+    setActivitiesMutation(payload, {
       onSuccess: () => {
         addActivity(newActivity);
         setNewActivity(emptyActivity);
