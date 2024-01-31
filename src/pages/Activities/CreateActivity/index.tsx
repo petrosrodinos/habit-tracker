@@ -20,6 +20,7 @@ import { setActivities } from "../../../services/activity";
 import { authStore } from "../../../store/auth";
 import { activityStore } from "../../../store/activity";
 import { v4 as uuidv4 } from "uuid";
+import { Alert } from "../../../interfaces/alert";
 
 const days: DayInt[] = [
   {
@@ -72,11 +73,6 @@ const emptyActivity: Activity = {
   description: "",
   days: days,
 };
-
-interface Alert {
-  color: string;
-  message: string;
-}
 
 interface CreateActivityProps {
   activity?: any;
