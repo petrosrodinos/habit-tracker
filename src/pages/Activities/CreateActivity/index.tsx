@@ -101,16 +101,8 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   }, [activity]);
 
   const handleCreate = () => {
-    const enabledDays = newActivity.days.filter((day) => day.enabled === true);
-    const hasTime = enabledDays.find((day) => day.time !== "");
+    if (!validateForm()) return;
 
-    if (newActivity.name === "" || enabledDays.length == 0 || !hasTime) {
-      setAlert({
-        color: "danger",
-        message: "Please fill out all fields",
-      });
-      return;
-    }
     const payload = {
       activities: [...activities, newActivity],
       userId: userId,
@@ -131,30 +123,18 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   };
 
   const handleEdit = () => {
-    const enabledDays = newActivity.days.filter((day) => day.enabled === true);
-    const hasTime = enabledDays.find((day) => day.time !== "");
-
-    if (newActivity.name === "" || enabledDays.length == 0 || !hasTime) {
-      setAlert({
-        color: "danger",
-        message: "Please fill out all fields",
-      });
-      return;
-    }
+    if (!validateForm()) return;
     const editedActivities = activities.filter((a) => a.id !== newActivity.id);
     editedActivities.push(newActivity);
-
-    editActivity(newActivity.id, newActivity);
 
     const payload = {
       activities: editedActivities,
       userId: userId,
     };
 
-    console.log("payload", payload);
-
     setActivitiesMutation(payload, {
       onSuccess: () => {
+        editActivity(newActivity.id, newActivity);
         setNewActivity(emptyActivity);
         onClose();
       },
@@ -165,6 +145,20 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
         });
       },
     });
+  };
+
+  const validateForm = () => {
+    const enabledDays = newActivity.days.filter((day) => day.enabled === true);
+    const hasTime = enabledDays.find((day) => day.time !== "");
+
+    if (newActivity.name === "" || enabledDays.length == 0 || !hasTime) {
+      setAlert({
+        color: "danger",
+        message: "Please fill out all fields",
+      });
+      return false;
+    }
+    return true;
   };
 
   const handleDayChange = (day: DayInt) => {
