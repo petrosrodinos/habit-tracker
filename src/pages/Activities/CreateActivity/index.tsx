@@ -81,18 +81,10 @@ interface Alert {
 interface CreateActivityProps {
   activity?: any;
   isOpen: boolean;
-  onCreate: (activity: Activity) => void;
-  onEdit: (id: string, activity: Activity) => void;
   onClose: () => void;
 }
 
-const CreateActivity: FC<CreateActivityProps> = ({
-  activity,
-  isOpen,
-  onClose,
-  onCreate,
-  onEdit,
-}) => {
+const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) => {
   const { userId } = authStore((state) => state);
   const { activities, addActivity, editActivity } = activityStore((state) => state);
   const [newActivity, setNewActivity] = useState<Activity>(emptyActivity);
@@ -127,7 +119,6 @@ const CreateActivity: FC<CreateActivityProps> = ({
       onSuccess: () => {
         addActivity(newActivity);
         setNewActivity(emptyActivity);
-        onCreate(newActivity);
         onClose();
       },
       onError: () => {
@@ -159,7 +150,6 @@ const CreateActivity: FC<CreateActivityProps> = ({
       onSuccess: () => {
         addActivity(newActivity);
         setNewActivity(emptyActivity);
-        onCreate(newActivity);
         onClose();
       },
       onError: () => {

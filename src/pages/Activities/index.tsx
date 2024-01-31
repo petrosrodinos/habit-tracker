@@ -16,30 +16,20 @@ import CreateActivity from "./CreateActivity";
 import DeleteActivity from "./DeleteActivity";
 import { Activity } from "../../interfaces/activity";
 import Header from "../../components/Header";
+import { activityStore } from "../../store/activity";
 
 const Activities: React.FC = () => {
+  const { activities } = activityStore();
   const [selectedActivity, setSelectedActivity] = useState<Activity>();
-  const [activities, setActivities] = useState<Activity[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleCreateActivity = (activity: Activity) => {
-    setActivities([...activities, activity]);
-  };
-
-  const handleEditActivity = (id: string, activity: Activity) => {
-    const index = activities.findIndex((item) => item.id === id);
-    const newActivities = [...activities];
-    newActivities[index] = activity;
-    setActivities(newActivities);
-  };
-
-  const handleDeleteActivity = (item: any) => {
+  const handleSelectedDeleteActivity = (item: Activity) => {
     setSelectedActivity(item);
     toggleDeleting();
   };
 
-  const handleSelectActivity = (item: any) => {
+  const handleSelectActivity = (item: Activity) => {
     setSelectedActivity(item);
     toggleCreating();
   };
@@ -54,7 +44,6 @@ const Activities: React.FC = () => {
 
   const openNewActivityModal = () => {
     setSelectedActivity(undefined);
-
     toggleCreating();
   };
 
@@ -62,13 +51,7 @@ const Activities: React.FC = () => {
     <IonPage>
       <Header title="Activities" />
       <IonContent fullscreen>
-        <CreateActivity
-          activity={selectedActivity}
-          isOpen={isCreating}
-          onClose={toggleCreating}
-          onCreate={handleCreateActivity}
-          onEdit={handleEditActivity}
-        />
+        <CreateActivity activity={selectedActivity} isOpen={isCreating} onClose={toggleCreating} />
         <DeleteActivity activity={selectedActivity} isOpen={isDeleting} onClose={toggleDeleting} />
         {activities.length === 0 && (
           <div style={{ marginTop: "20px", marginLeft: "20px" }}>
@@ -92,7 +75,7 @@ const Activities: React.FC = () => {
               />
 
               <IonIcon
-                onClick={() => handleDeleteActivity(item.id)}
+                onClick={() => handleSelectedDeleteActivity(item)}
                 color="danger"
                 slot="end"
                 aria-hidden="true"
