@@ -11,6 +11,7 @@ interface AuthState {
   exp: number;
   logOut: () => void;
   logIn: (payload: any) => void;
+  addActivity: (payload: Activity) => void;
 }
 
 const initialStateValues = {
@@ -41,6 +42,10 @@ export const authStore = create<AuthState>()(
             token: payload.token,
             exp: payload.exp,
           }),
+        addActivity: (payload: Activity) => {
+          const activities = [...authStore.getState().activities, payload];
+          set({ activities });
+        },
       }),
       {
         name: "habbit-tracker-auth",

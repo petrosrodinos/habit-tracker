@@ -11,10 +11,14 @@ import {
   IonList,
   IonTextarea,
   IonToast,
+  IonLoading,
 } from "@ionic/react";
 import Day from "./Day";
 import { Activity, Day as DayInt } from "../../../interfaces/activity";
-import { on } from "events";
+import { useMutation } from "react-query";
+import { createActivity } from "../../../services/activity";
+import { authStore } from "../../../store/auth";
+import { v4 as uuidv4 } from "uuid";
 
 interface CreateActivityProps {
   activity?: any;
@@ -69,14 +73,23 @@ const days: DayInt[] = [
 ];
 
 const emptyActivity: Activity = {
+  id: uuidv4(),
   name: "",
   description: "",
   days: days,
 };
 
+interface Alert {
+  color: string;
+  message: string;
+}
+
 const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, onCreate }) => {
+  const { userId, activities, addActivity } = authStore((state) => state);
   const [newActivity, setNewActivity] = useState<Activity>(emptyActivity);
-  const [error, setError] = useState<boolean>(false);
+  const [alert, setAlert] = useState<Alert>();
+
+  const { mutate: addActivityMutation } = useMutation(createActivity);
 
   useEffect(() => {
     if (activity) {
@@ -87,14 +100,34 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, on
   }, [activity]);
 
   const handleCreate = () => {
-    const atLeastOneDay = newActivity.days.find((day) => day.enabled === true);
-    if (newActivity.name === "" || !atLeastOneDay) {
-      setError(true);
+    const enabledDays = newActivity.days.filter((day) => day.enabled === true);
+    const hasTime = enabledDays.find((day) => day.time !== "");
+
+    if (newActivity.name === "" || enabledDays.length == 0 || !hasTime) {
+      setAlert({
+        color: "danger",
+        message: "Please fill out all fields",
+      });
       return;
     }
-    onCreate(newActivity);
-    setNewActivity(emptyActivity);
-    onClose();
+    const payload = {
+      activities: [...activities, newActivity],
+      userId: userId,
+    };
+    addActivityMutation(payload, {
+      onSuccess: () => {
+        addActivity(newActivity);
+        setNewActivity(emptyActivity);
+        onCreate(newActivity);
+        onClose();
+      },
+      onError: () => {
+        setAlert({
+          color: "danger",
+          message: "Could not create activity",
+        });
+      },
+    });
   };
 
   const handleEdit = () => {
@@ -118,18 +151,20 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, on
           </IonButtons>
           <IonTitle>{activity ? "Edit" : "Create an"} activity</IonTitle>
           <IonButtons slot="end">
-            <IonButton color="primary" strong={true} onClick={handleCreate}>
+            <IonButton id="open-loading" color="primary" strong={true} onClick={handleCreate}>
               {activity ? "Save" : "Create"}
             </IonButton>
+            <IonLoading trigger="open-loading" message="Creating activity" duration={3000} />
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
         <IonToast
-          isOpen={error}
-          message="Please fill out all fields"
-          onDidDismiss={() => setError(false)}
+          isOpen={!!alert}
+          message={alert?.message}
+          onDidDismiss={() => setAlert(undefined)}
           duration={3000}
+          color={alert?.color}
         ></IonToast>
         <IonInput
           value={newActivity.name}
