@@ -9,11 +9,13 @@ import {
   IonReorder,
   IonReorderGroup,
   ItemReorderEventDetail,
+  IonNote,
 } from "@ionic/react";
 import Header from "../../components/Header";
 import { activityStore } from "../../store/activity";
-import { Activity } from "../../interfaces/activity";
+import { Activity, Day } from "../../interfaces/activity";
 import "./style.css";
+import { getDayOfWeekNumber, getTimeForTodaysActivity } from "../../utils/activity";
 
 const ToDo: FC = () => {
   const { activities, todaysActivities, setTodaysActivities } = activityStore();
@@ -45,10 +47,21 @@ const ToDo: FC = () => {
             {todaysActivities?.map((item, index) => (
               <IonItem key={index}>
                 <IonReorder slot="start"></IonReorder>
-                <IonLabel className={`${item.completed ? "item-completed" : ""}`}>
-                  {item.name}
+                <div>
+                  <IonLabel className={`${item.completed ? "item-completed" : ""}`}>
+                    {item.name}
+                  </IonLabel>
+                  <IonNote>{item.description}</IonNote>
+                </div>
+                <IonLabel
+                  style={{ paddingLeft: 200 }}
+                  slot="end"
+                  className={`${item.completed ? "item-completed" : ""}`}
+                >
+                  {getTimeForTodaysActivity(item)}
                 </IonLabel>
                 <IonCheckbox
+                  slot="end"
                   checked={item.completed}
                   onIonChange={() => handleItemCompleted(item)}
                 />
