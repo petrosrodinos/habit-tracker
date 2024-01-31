@@ -16,7 +16,7 @@ onAuthStateChanged(auth, (user) => {
     return undefined;
   }
 
-  addNewUser(user);
+  // addNewUser(user);
   return undefined;
 });
 

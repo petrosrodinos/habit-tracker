@@ -57,6 +57,7 @@ const ToDo: FC = () => {
                     {item.name}
                   </IonLabel>
                   <IonCheckbox
+                    aria-label="completed"
                     checked={item.completed}
                     onIonChange={() => handleItemCompleted(item)}
                   />

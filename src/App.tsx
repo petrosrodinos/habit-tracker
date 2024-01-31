@@ -47,6 +47,9 @@ const App: React.FC = () => {
         <Route exact path="/">
           <Redirect to={isLoggedIn ? "/todo" : "/auth"} />
         </Route>
+        <Route exact path="*">
+          <Redirect to={isLoggedIn ? "/todo" : "/auth"} />
+        </Route>
         {!isLoggedIn && (
           <Route exact path="/auth">
             <Auth />
