@@ -3,6 +3,8 @@ export interface Activity {
   name: string;
   description?: string;
   days: Day[];
+  counter: number;
+  completed?: boolean;
 }
 
 export interface Day {

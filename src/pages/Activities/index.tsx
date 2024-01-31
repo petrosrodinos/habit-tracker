@@ -59,7 +59,7 @@ const Activities: React.FC = () => {
           </div>
         )}
         <IonList inset={true}>
-          {activities.map((item, index) => (
+          {activities.map((item: Activity, index: number) => (
             <IonItem key={index}>
               <div>
                 <IonLabel>{item.name}</IonLabel>

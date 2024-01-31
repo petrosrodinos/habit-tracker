@@ -12,36 +12,28 @@ import {
 } from "@ionic/react";
 import Header from "../../components/Header";
 import { activityStore } from "../../store/activity";
+import { Activity } from "../../interfaces/activity";
 import "./style.css";
 
-interface ItemType {
-  id: number;
-  name: string;
-  completed: boolean;
-}
-
 const ToDo: FC = () => {
-  // const { activities } = activityStore();
-  const [state, setState] = useState<ItemType[]>([
-    { id: 1, name: "shrek", completed: false },
-    { id: 2, name: "fiona", completed: false },
-  ]);
+  const { activities, todaysActivities, setTodaysActivities } = activityStore();
+
+  useEffect(() => {
+    setTodaysActivities();
+  }, [activities]);
 
   function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
-    setState((state) => {
-      const draggedItem = state.splice(event.detail.from, 1)[0];
-      state.splice(event.detail.to, 0, draggedItem);
-      return state.slice();
-    });
-
+    const draggedItem = todaysActivities.splice(event.detail.from, 1)[0];
+    todaysActivities.splice(event.detail.to, 0, draggedItem);
+    setTodaysActivities(todaysActivities.slice());
     event.detail.complete();
   }
 
-  function handleItemCompleted(item: ItemType) {
-    const newItems = [...state];
+  function handleItemCompleted(item: Activity) {
+    const newItems = [...todaysActivities];
     const itemIndex = newItems.findIndex((i) => i.id === item.id);
-    newItems[itemIndex].completed = !state[itemIndex].completed;
-    setState(newItems);
+    newItems[itemIndex].completed = !todaysActivities[itemIndex].completed;
+    setTodaysActivities(newItems);
   }
 
   return (
@@ -50,26 +42,24 @@ const ToDo: FC = () => {
       <IonContent fullscreen>
         <IonList>
           <IonReorderGroup disabled={false} onIonItemReorder={handleReorder}>
-            {state
-              // .filter((item) => !item.completed)
-              .map((item, index) => (
-                <IonItem key={index}>
-                  <IonReorder slot="start"></IonReorder>
-                  <IonLabel className={`${item.completed ? "item-completed" : ""}`}>
-                    {item.name}
-                  </IonLabel>
-                  <IonCheckbox
-                    checked={item.completed}
-                    onIonChange={() => handleItemCompleted(item)}
-                  />
-                </IonItem>
-              ))}
+            {todaysActivities?.map((item, index) => (
+              <IonItem key={index}>
+                <IonReorder slot="start"></IonReorder>
+                <IonLabel className={`${item.completed ? "item-completed" : ""}`}>
+                  {item.name}
+                </IonLabel>
+                <IonCheckbox
+                  checked={item.completed}
+                  onIonChange={() => handleItemCompleted(item)}
+                />
+              </IonItem>
+            ))}
           </IonReorderGroup>
         </IonList>
         <br />
         <br />
         <IonList>
-          {state
+          {todaysActivities
             .filter((item) => item.completed)
             .map((item, index) => (
               <IonItem key={index}>

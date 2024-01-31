@@ -36,11 +36,13 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import Auth from "./pages/Auth";
 import { authStore } from "./store/auth";
+import { activityStore } from "./store/activity";
 
 setupIonicReact();
 
 const App: React.FC = () => {
   const { isLoggedIn } = authStore((state) => state);
+
   return (
     <IonApp>
       <IonReactRouter>

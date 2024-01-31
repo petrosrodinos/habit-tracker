@@ -71,6 +71,7 @@ const emptyActivity: Activity = {
   id: uuidv4(),
   name: "",
   description: "",
+  counter: 0,
   days: days,
 };
 
@@ -89,12 +90,17 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   const { mutate: setActivitiesMutation, isLoading: isSetting } = useMutation(setActivities);
 
   useEffect(() => {
+    console.log("activity", activity);
     if (activity) {
       setNewActivity(activity);
     } else {
       setNewActivity(emptyActivity);
     }
   }, [activity]);
+
+  useEffect(() => {
+    console.log("newActivity", newActivity);
+  }, [newActivity]);
 
   const handleCreate = () => {
     if (!validateForm()) return;
