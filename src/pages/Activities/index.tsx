@@ -3,27 +3,15 @@ import {
   IonContent,
   IonFab,
   IonFabButton,
-  IonFabList,
-  IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
   IonList,
   IonNote,
   IonPage,
-  IonTitle,
-  IonToolbar,
 } from "@ionic/react";
 import "./style.css";
-import {
-  listCircle,
-  trashOutline,
-  pencilOutline,
-  chevronUpCircle,
-  colorPalette,
-  globe,
-  addOutline,
-} from "ionicons/icons";
+import { trashOutline, pencilOutline, addOutline } from "ionicons/icons";
 import CreateActivity from "./CreateActivity";
 import DeleteActivity from "./DeleteActivity";
 import { Activity } from "../../interfaces/activity";
@@ -39,12 +27,16 @@ const Activities: React.FC = () => {
     setActivities([...activities, activity]);
   };
 
-  const toggleCreating = () => {
-    setIsCreating(!isCreating);
+  const handleEditActivity = (id: string, activity: Activity) => {
+    const index = activities.findIndex((item) => item.id === id);
+    const newActivities = [...activities];
+    newActivities[index] = activity;
+    setActivities(newActivities);
   };
 
-  const toggleDeleting = () => {
-    setIsDeleting(!isDeleting);
+  const handleDeleteActivity = (item: any) => {
+    setSelectedActivity(item);
+    toggleDeleting();
   };
 
   const handleSelectActivity = (item: any) => {
@@ -52,9 +44,12 @@ const Activities: React.FC = () => {
     toggleCreating();
   };
 
-  const handleDeleteActivity = (item: any) => {
-    setSelectedActivity(item);
-    toggleDeleting();
+  const toggleCreating = () => {
+    setIsCreating(!isCreating);
+  };
+
+  const toggleDeleting = () => {
+    setIsDeleting(!isDeleting);
   };
 
   const openNewActivityModal = () => {
@@ -72,6 +67,7 @@ const Activities: React.FC = () => {
           isOpen={isCreating}
           onClose={toggleCreating}
           onCreate={handleCreateActivity}
+          onEdit={handleEditActivity}
         />
         <DeleteActivity activity={selectedActivity} isOpen={isDeleting} onClose={toggleDeleting} />
         {activities.length === 0 && (
@@ -96,7 +92,7 @@ const Activities: React.FC = () => {
               />
 
               <IonIcon
-                onClick={() => handleDeleteActivity(item)}
+                onClick={() => handleDeleteActivity(item.id)}
                 color="danger"
                 slot="end"
                 aria-hidden="true"
@@ -108,7 +104,7 @@ const Activities: React.FC = () => {
         </IonList>
 
         <IonFab onClick={openNewActivityModal} slot="fixed" vertical="bottom" horizontal="end">
-          <IonFabButton>
+          <IonFabButton className="activity-fa-button">
             <IonIcon icon={addOutline}></IonIcon>
           </IonFabButton>
         </IonFab>

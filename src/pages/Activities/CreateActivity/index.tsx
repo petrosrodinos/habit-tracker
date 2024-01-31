@@ -21,13 +21,6 @@ import { authStore } from "../../../store/auth";
 import { activityStore } from "../../../store/activity";
 import { v4 as uuidv4 } from "uuid";
 
-interface CreateActivityProps {
-  activity?: any;
-  isOpen: boolean;
-  onCreate: (activity: Activity) => void;
-  onClose: () => void;
-}
-
 const days: DayInt[] = [
   {
     id: 1,
@@ -85,7 +78,21 @@ interface Alert {
   message: string;
 }
 
-const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, onCreate }) => {
+interface CreateActivityProps {
+  activity?: any;
+  isOpen: boolean;
+  onCreate: (activity: Activity) => void;
+  onEdit: (id: string, activity: Activity) => void;
+  onClose: () => void;
+}
+
+const CreateActivity: FC<CreateActivityProps> = ({
+  activity,
+  isOpen,
+  onClose,
+  onCreate,
+  onEdit,
+}) => {
   const { userId } = authStore((state) => state);
   const { activities, addActivity, editActivity } = activityStore((state) => state);
   const [newActivity, setNewActivity] = useState<Activity>(emptyActivity);
@@ -134,9 +141,37 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, on
 
   const handleEdit = () => {
     console.log("edit");
+    const enabledDays = newActivity.days.filter((day) => day.enabled === true);
+    const hasTime = enabledDays.find((day) => day.time !== "");
+
+    if (newActivity.name === "" || enabledDays.length == 0 || !hasTime) {
+      setAlert({
+        color: "danger",
+        message: "Please fill out all fields",
+      });
+      return;
+    }
+    const payload = {
+      activities: [...activities, newActivity],
+      userId: userId,
+    };
+    setActivitiesMutation(payload, {
+      onSuccess: () => {
+        addActivity(newActivity);
+        setNewActivity(emptyActivity);
+        onCreate(newActivity);
+        onClose();
+      },
+      onError: () => {
+        setAlert({
+          color: "danger",
+          message: "Could not create activity",
+        });
+      },
+    });
   };
 
-  const handleChange = (day: DayInt) => {
+  const handleDayChange = (day: DayInt) => {
     const acitivity = newActivity.days.find((d) => d.id === day.id);
     if (acitivity) {
       const index = newActivity.days.indexOf(acitivity);
@@ -149,11 +184,18 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, on
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={onClose}>Cancel</IonButton>
+            <IonButton color="danger" onClick={onClose}>
+              Cancel
+            </IonButton>
           </IonButtons>
           <IonTitle>{activity ? "Edit" : "Create an"} activity</IonTitle>
           <IonButtons slot="end">
-            <IonButton id="open-loading" color="primary" strong={true} onClick={handleCreate}>
+            <IonButton
+              id="open-loading"
+              color="primary"
+              strong={true}
+              onClick={activity ? handleEdit : handleCreate}
+            >
               {activity ? "Save" : "Create"}
             </IonButton>
             <IonLoading trigger="open-loading" message="Creating activity" duration={3000} />
@@ -187,7 +229,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose, on
         ></IonTextarea>
         <IonList>
           {days.map((day, index) => (
-            <Day key={index} onChange={handleChange} day={day} />
+            <Day key={index} onChange={handleDayChange} day={day} />
           ))}
         </IonList>
       </IonContent>
