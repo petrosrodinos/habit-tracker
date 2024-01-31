@@ -19,7 +19,7 @@
     "@types/react-dom": "^18.0.6",
     "@types/react-router": "^5.1.11",
     "@types/react-router-dom": "^5.1.7",
-    "firebase": "^10.7.2",
+    "firebase": "^9.14.0",
     "history": "^4.9.0",
     "ionicons": "^7.0.0",
     "react": "^18.2.0",
@@ -46,6 +46,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@capacitor/cli": "5.6.0",
     "@typescript-eslint/eslint-plugin": "^5.59.2",
     "@typescript-eslint/parser": "^5.59.2",
@@ -53,7 +54,7 @@
     "eslint-plugin-react": "^7.32.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start -p 4200",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
     "eject": "react-scripts eject",

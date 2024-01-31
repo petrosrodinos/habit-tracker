@@ -49,11 +49,11 @@ const App: React.FC = () => {
             <Route exact path="/">
               <Redirect to={isLoggedIn ? "/todo" : "/auth"} />
             </Route>
-            {!isLoggedIn && (
-              <Route exact path="/auth">
-                <Auth />
-              </Route>
-            )}
+            {/* {!isLoggedIn && ( */}
+            <Route exact path="/auth">
+              <Auth />
+            </Route>
+            {/* )} */}
             {/* {isLoggedIn && ( */}
             <>
               <Route exact path="/activities">

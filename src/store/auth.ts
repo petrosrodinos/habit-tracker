@@ -1,10 +1,14 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { Activity } from "../interfaces/activity";
 
 interface AuthState {
   isLoggedIn: boolean;
   avatar: string;
   userId: string;
+  activities: Activity[];
+  token: string;
+  exp: number;
   logOut: () => void;
   logIn: (payload: any) => void;
 }
@@ -13,6 +17,9 @@ const initialStateValues = {
   isLoggedIn: false,
   userId: "",
   avatar: "",
+  token: "",
+  exp: 0,
+  activities: [],
 };
 
 export const authStore = create<AuthState>()(
@@ -28,8 +35,11 @@ export const authStore = create<AuthState>()(
         logIn: (payload: any) =>
           set({
             isLoggedIn: true,
-            avatar: payload?.avatar,
+            avatar: payload.avatar,
             userId: payload.userId,
+            activities: payload.activities,
+            token: payload.token,
+            exp: payload.exp,
           }),
       }),
       {
