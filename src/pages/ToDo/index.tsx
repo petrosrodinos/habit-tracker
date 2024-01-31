@@ -11,6 +11,7 @@ import {
   ItemReorderEventDetail,
 } from "@ionic/react";
 import Header from "../../components/Header";
+import { activityStore } from "../../store/activity";
 import "./style.css";
 
 interface ItemType {
@@ -20,6 +21,7 @@ interface ItemType {
 }
 
 const ToDo: FC = () => {
+  // const { activities } = activityStore();
   const [state, setState] = useState<ItemType[]>([
     { id: 1, name: "shrek", completed: false },
     { id: 2, name: "fiona", completed: false },

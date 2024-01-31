@@ -90,7 +90,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   const [newActivity, setNewActivity] = useState<Activity>(emptyActivity);
   const [alert, setAlert] = useState<Alert>();
 
-  const { mutate: setActivitiesMutation } = useMutation(setActivities);
+  const { mutate: setActivitiesMutation, isLoading: isSetting } = useMutation(setActivities);
 
   useEffect(() => {
     if (activity) {
@@ -131,7 +131,6 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   };
 
   const handleEdit = () => {
-    console.log("edit");
     const enabledDays = newActivity.days.filter((day) => day.enabled === true);
     const hasTime = enabledDays.find((day) => day.time !== "");
 
@@ -142,20 +141,27 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
       });
       return;
     }
+    const editedActivities = activities.filter((a) => a.id !== newActivity.id);
+    editedActivities.push(newActivity);
+
+    editActivity(newActivity.id, newActivity);
+
     const payload = {
-      activities: [...activities, newActivity],
+      activities: editedActivities,
       userId: userId,
     };
+
+    console.log("payload", payload);
+
     setActivitiesMutation(payload, {
       onSuccess: () => {
-        addActivity(newActivity);
         setNewActivity(emptyActivity);
         onClose();
       },
       onError: () => {
         setAlert({
           color: "danger",
-          message: "Could not create activity",
+          message: "Could not edit activity",
         });
       },
     });
@@ -188,7 +194,9 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
             >
               {activity ? "Save" : "Create"}
             </IonButton>
-            <IonLoading trigger="open-loading" message="Creating activity" duration={3000} />
+            {isSetting && (
+              <IonLoading trigger="open-loading" message="Handling your activity" duration={3000} />
+            )}
           </IonButtons>
         </IonToolbar>
       </IonHeader>
@@ -218,7 +226,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
           onIonChange={(e) => setNewActivity({ ...newActivity, description: e.detail.value! })}
         ></IonTextarea>
         <IonList>
-          {days.map((day, index) => (
+          {newActivity.days.map((day, index) => (
             <Day key={index} onChange={handleDayChange} day={day} />
           ))}
         </IonList>

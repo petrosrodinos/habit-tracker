@@ -1,5 +1,5 @@
 import { IonDatetime, IonItem, IonLabel, IonToggle } from "@ionic/react";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { Day as DayInt } from "../../../../interfaces/activity";
 
 interface DayProps {
@@ -8,10 +8,7 @@ interface DayProps {
 }
 
 const Day: FC<DayProps> = ({ day, onChange }) => {
-  const [enabled, setEnabled] = useState(false);
-
   const handleToggle = () => {
-    setEnabled(!enabled);
     onChange({ ...day, enabled: !day.enabled });
   };
 
@@ -22,11 +19,11 @@ const Day: FC<DayProps> = ({ day, onChange }) => {
   return (
     <>
       <IonItem>
-        <IonToggle onIonChange={handleToggle}>
+        <IonToggle checked={day.enabled} onIonChange={handleToggle}>
           <IonLabel>{day.name}</IonLabel>
         </IonToggle>
       </IonItem>
-      {enabled && (
+      {day.enabled && (
         <IonDatetime
           value={day.time}
           onIonChange={handletimeChange}
