@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import {
   IonContent,
   IonPage,
@@ -13,9 +13,9 @@ import {
 } from "@ionic/react";
 import Header from "../../components/Header";
 import { activityStore } from "../../store/activity";
-import { Activity, Day } from "../../interfaces/activity";
+import { Activity } from "../../interfaces/activity";
+import { getTimeForTodaysActivity } from "../../utils/activity";
 import "./style.css";
-import { getDayOfWeekNumber, getTimeForTodaysActivity } from "../../utils/activity";
 
 const ToDo: FC = () => {
   const { activities, todaysActivities, setTodaysActivities } = activityStore();
@@ -54,7 +54,7 @@ const ToDo: FC = () => {
                   <IonNote>{item.description}</IonNote>
                 </div>
                 <IonLabel
-                  style={{ paddingLeft: 200 }}
+                  // style={{ paddingLeft: 200 }}
                   slot="end"
                   className={`${item.completed ? "item-completed" : ""}`}
                 >

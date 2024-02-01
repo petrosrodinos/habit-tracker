@@ -1,8 +1,7 @@
-import { setActivities } from "./../services/activity";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { Activity, Day } from "../interfaces/activity";
-import { getDayOfWeekNumber } from "../utils/activity";
+import { getDayOfWeekNumber, compareTimes, getTimeForTodaysActivity } from "../utils/activity";
 
 interface ActivityState {
   activities: Activity[];
@@ -54,12 +53,18 @@ export const activityStore = create<ActivityState>()(
           }
           const storedActivities: Activity[] = [...activityStore.getState().activities];
           const dayOfWeekNumber = getDayOfWeekNumber();
-          const todaysActivities = storedActivities.filter((activity: Activity) => {
-            const temp = activity.days.find((day: Day) => {
-              return day.id === dayOfWeekNumber && day.enabled;
+          const todaysActivities = storedActivities
+            .filter((activity: Activity) => {
+              const temp = activity.days.find((day: Day) => {
+                return day.id === dayOfWeekNumber && day.enabled;
+              });
+              return temp;
+            })
+            .sort((a: Activity, b: Activity) => {
+              const aDayTime = getTimeForTodaysActivity(a);
+              const bDayTime = getTimeForTodaysActivity(b);
+              return compareTimes(aDayTime, bDayTime);
             });
-            return temp;
-          });
           set({ todaysActivities: todaysActivities });
         },
       }),

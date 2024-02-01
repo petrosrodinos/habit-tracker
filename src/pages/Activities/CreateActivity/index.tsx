@@ -72,6 +72,7 @@ const emptyActivity: Activity = {
   name: "",
   description: "",
   counter: 0,
+  created: new Date().toISOString(),
   days: days,
 };
 
@@ -90,17 +91,12 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   const { mutate: setActivitiesMutation, isLoading: isSetting } = useMutation(setActivities);
 
   useEffect(() => {
-    console.log("activity", activity);
     if (activity) {
       setNewActivity(activity);
     } else {
       setNewActivity(emptyActivity);
     }
   }, [activity]);
-
-  useEffect(() => {
-    console.log("newActivity", newActivity);
-  }, [newActivity]);
 
   const handleCreate = () => {
     if (!validateForm()) return;
@@ -151,9 +147,9 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
 
   const validateForm = () => {
     const enabledDays = newActivity.days.filter((day) => day.enabled === true);
-    const hasTime = enabledDays.find((day) => day.time !== "");
+    // const hasTime = enabledDays.find((day) => day.time !== "");
 
-    if (newActivity.name === "" || enabledDays.length == 0 || !hasTime) {
+    if (newActivity.name === "" || enabledDays.length == 0) {
       setAlert({
         color: "danger",
         message: "Please fill out all fields",

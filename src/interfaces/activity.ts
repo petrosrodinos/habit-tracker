@@ -4,6 +4,7 @@ export interface Activity {
   description?: string;
   days: Day[];
   counter: number;
+  created: string;
   completed?: boolean;
 }
 
