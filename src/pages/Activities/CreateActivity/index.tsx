@@ -67,16 +67,6 @@ const days: DayInt[] = [
   },
 ];
 
-const emptyActivity: Activity = {
-  id: uuidv4(),
-  name: "",
-  description: "",
-  counter: 0,
-  created: new Date().toISOString(),
-  days: days,
-  completed: false,
-};
-
 interface CreateActivityProps {
   activity?: any;
   isOpen: boolean;
@@ -86,19 +76,34 @@ interface CreateActivityProps {
 const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) => {
   const { userId } = authStore((state) => state);
   const { activities, addActivity, editActivity } = activityStore((state) => state);
-  const [newActivity, setNewActivity] = useState<Activity>(emptyActivity);
+  const [newActivity, setNewActivity] = useState<Activity>(getEmptyActivity());
   const [alert, setAlert] = useState<Alert>();
 
   const { mutate: setActivitiesMutation, isLoading: isSetting } = useMutation(setActivities);
 
   useEffect(() => {
-    console.log("ACTIVITY", activity);
     if (activity) {
       setNewActivity(activity);
     } else {
-      setNewActivity(emptyActivity);
+      setNewActivity(getEmptyActivity());
     }
   }, [activity]);
+
+  useEffect(() => {
+    console.log("newActivity", newActivity);
+  }, [newActivity]);
+
+  function getEmptyActivity(): Activity {
+    return {
+      id: uuidv4(),
+      name: "",
+      description: "",
+      counter: 0,
+      created: new Date().toISOString(),
+      days,
+      completed: false,
+    };
+  }
 
   const handleCreate = () => {
     if (!validateForm()) return;
@@ -110,7 +115,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
     setActivitiesMutation(payload, {
       onSuccess: () => {
         addActivity(newActivity);
-        setNewActivity(emptyActivity);
+        setNewActivity(getEmptyActivity());
         onClose();
       },
       onError: () => {
@@ -135,7 +140,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
     setActivitiesMutation(payload, {
       onSuccess: () => {
         editActivity(newActivity.id, newActivity);
-        setNewActivity(emptyActivity);
+        setNewActivity(getEmptyActivity());
         onClose();
       },
       onError: () => {
@@ -178,6 +183,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
     }
     setNewActivity({ ...newActivity });
   };
+
   return (
     <IonModal isOpen={isOpen}>
       <IonHeader>

@@ -51,7 +51,13 @@ const Activities: React.FC = () => {
     <IonPage>
       <Header title="Activities" />
       <IonContent fullscreen>
-        <CreateActivity activity={selectedActivity} isOpen={isCreating} onClose={toggleCreating} />
+        {isCreating && (
+          <CreateActivity
+            activity={selectedActivity}
+            isOpen={isCreating}
+            onClose={toggleCreating}
+          />
+        )}
         <DeleteActivity activity={selectedActivity} isOpen={isDeleting} onClose={toggleDeleting} />
         {activities.length === 0 && (
           <div style={{ marginTop: "20px", marginLeft: "20px" }}>
