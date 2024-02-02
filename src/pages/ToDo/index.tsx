@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useState, useEffect } from "react";
 import {
   IonContent,
   IonPage,
@@ -10,24 +10,37 @@ import {
   IonReorderGroup,
   ItemReorderEventDetail,
   IonNote,
+  IonToast,
 } from "@ionic/react";
 import Header from "../../components/Header";
 import { activityStore } from "../../store/activity";
 import { Activity } from "../../interfaces/activity";
 import { getTimeForTodaysActivity } from "../../utils/activity";
+import { setActivities as setActivitiesDB } from "../../services/activity";
+import { useMutation } from "react-query";
+import { authStore } from "../../store/auth";
+import { Alert } from "../../interfaces/alert";
 import "./style.css";
 
 const ToDo: FC = () => {
-  const { activities, todaysActivities, setTodaysActivities } = activityStore();
+  const { userId } = authStore();
+  const { activities, todaysActivities, setTodaysActivities, setActivities } = activityStore();
+  const { mutate: setActivitiesMutation, isLoading: isSetting } = useMutation(setActivitiesDB);
+  const [alert, setAlert] = useState<Alert>();
 
   useEffect(() => {
     setTodaysActivities();
   }, [activities]);
 
+  // useEffect(() => {
+  //   console.log("todaysActivities", todaysActivities);
+  // }, [todaysActivities]);
+
   function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
     const draggedItem = todaysActivities.splice(event.detail.from, 1)[0];
     todaysActivities.splice(event.detail.to, 0, draggedItem);
-    setTodaysActivities(todaysActivities.slice());
+    // console.log("ads", todaysActivities.slice());
+    // setTodaysActivities(todaysActivities.slice());
     event.detail.complete();
   }
 
@@ -35,13 +48,50 @@ const ToDo: FC = () => {
     const newItems = [...todaysActivities];
     const itemIndex = newItems.findIndex((i) => i.id === item.id);
     newItems[itemIndex].completed = !todaysActivities[itemIndex].completed;
-    setTodaysActivities(newItems);
+
+    const updatedActivities = activities.map((activity) => {
+      if (activity.id === item.id) {
+        if (newItems[itemIndex].completed) {
+          activity.counter = activity.counter + 1;
+        } else {
+          activity.counter = activity.counter - 1;
+        }
+      }
+      return activity;
+    });
+
+    const payload = {
+      activities: updatedActivities,
+      userId: userId,
+    };
+    setActivitiesMutation(payload, {
+      onSuccess: () => {
+        setTodaysActivities(newItems);
+        setAlert({
+          color: "success",
+          message: "Activity completed!",
+        });
+      },
+      onError: () => {
+        setAlert({
+          color: "danger",
+          message: "Could not update activity",
+        });
+      },
+    });
   }
 
   return (
     <IonPage>
       <Header title="Todos" />
       <IonContent fullscreen>
+        <IonToast
+          isOpen={!!alert}
+          message={alert?.message}
+          onDidDismiss={() => setAlert(undefined)}
+          duration={3000}
+          color={alert?.color}
+        ></IonToast>
         <IonList>
           <IonReorderGroup disabled={false} onIonItemReorder={handleReorder}>
             {todaysActivities?.map((item, index) => (
