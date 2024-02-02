@@ -7,9 +7,10 @@ import {
   IonFabButton,
   IonFabList,
   IonIcon,
+  IonText,
 } from "@ionic/react";
 import { powerOutline } from "ionicons/icons";
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { authStore } from "../../store/auth";
 import { activityStore } from "../../store/activity";
 import { logoutUser } from "../../services/auth";
@@ -20,9 +21,13 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ title }) => {
-  const { emptyActivities } = activityStore();
+  const { emptyActivities, todaysActivities } = activityStore();
   const location = useHistory();
   const { avatar, logOut } = authStore((state) => state);
+
+  const completedActivities = useMemo(() => {
+    return todaysActivities.filter((activity) => activity.completed).length;
+  }, [todaysActivities]);
 
   const handleLogOut = () => {
     logOut();
@@ -35,6 +40,9 @@ const Header: FC<HeaderProps> = ({ title }) => {
     <IonHeader>
       <IonToolbar>
         <IonTitle>{title}</IonTitle>
+        <IonText slot="start">
+          {completedActivities}/{todaysActivities.length}
+        </IonText>
         <IonButtons slot="end">
           <IonFab slot="fixed" vertical="top" horizontal="end" edge={true}>
             <IonFabButton size="small">

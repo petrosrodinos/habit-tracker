@@ -13,7 +13,7 @@ export const addNewUser = async (user: any): Promise<any | null> => {
       return {
         ...userToStore,
         token: user.accessToken,
-        exp: user.reloadUserInfo.validSince,
+        exp: user.stsTokenManager.expirationTime,
       };
     } else {
       const docRef = doc(db, "users", user.uid);
@@ -23,7 +23,7 @@ export const addNewUser = async (user: any): Promise<any | null> => {
         return {
           ...docSnap.data(),
           token: user.accessToken,
-          exp: user.reloadUserInfo.validSince,
+          exp: user.stsTokenManager.expirationTime,
         };
       }
     }

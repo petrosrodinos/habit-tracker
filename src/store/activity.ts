@@ -6,6 +6,7 @@ import { getDayOfWeekNumber, compareTimes, getTimeForTodaysActivity } from "../u
 interface ActivityState {
   activities: Activity[];
   todaysActivities: Activity[];
+  calculatedActivitiesTimestamp: number;
   setActivities: (payload: Activity[]) => void;
   addActivity: (payload: Activity) => void;
   editActivity: (id: string, payload: Activity) => void;
@@ -17,6 +18,7 @@ interface ActivityState {
 const initialStateValues = {
   activities: [],
   todaysActivities: [],
+  calculatedActivitiesTimestamp: 0,
 };
 
 export const activityStore = create<ActivityState>()(
@@ -28,7 +30,7 @@ export const activityStore = create<ActivityState>()(
           set({ activities: payload });
         },
         emptyActivities: () => {
-          set({ activities: [] });
+          set({ activities: [], todaysActivities: [] });
         },
         addActivity: (payload: Activity) => {
           const activities = [...activityStore.getState().activities, payload];
@@ -51,6 +53,9 @@ export const activityStore = create<ActivityState>()(
             set({ todaysActivities: activities });
             return;
           }
+          if (Date.now() - activityStore.getState().calculatedActivitiesTimestamp < 60000) {
+            return;
+          }
           const storedActivities: Activity[] = [...activityStore.getState().activities];
           const dayOfWeekNumber = getDayOfWeekNumber();
           const todaysActivities = storedActivities
@@ -65,7 +70,9 @@ export const activityStore = create<ActivityState>()(
               const bDayTime = getTimeForTodaysActivity(b);
               return compareTimes(aDayTime, bDayTime);
             });
+
           set({ todaysActivities: todaysActivities });
+          set({ calculatedActivitiesTimestamp: Date.now() });
         },
       }),
       {

@@ -89,10 +89,6 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
     }
   }, [activity]);
 
-  useEffect(() => {
-    console.log("newActivity", newActivity);
-  }, [newActivity]);
-
   function getEmptyActivity(): Activity {
     return {
       id: uuidv4(),
