@@ -45,13 +45,16 @@ const ToDo: FC = () => {
   }
 
   function handleItemCompleted(item: Activity) {
-    const newItems = [...todaysActivities];
-    const itemIndex = newItems.findIndex((i) => i.id === item.id);
-    newItems[itemIndex].completed = !todaysActivities[itemIndex].completed;
+    const newItems = todaysActivities.map((activity) => {
+      if (activity.id === item.id) {
+        return { ...activity, completed: !activity.completed };
+      }
+      return activity;
+    });
 
     const updatedActivities = activities.map((activity) => {
       if (activity.id === item.id) {
-        if (newItems[itemIndex].completed) {
+        if (!item.completed) {
           activity.counter = activity.counter + 1;
         } else {
           activity.counter = activity.counter - 1;
@@ -60,6 +63,8 @@ const ToDo: FC = () => {
       return activity;
     });
 
+    console.log("updatedActivities", updatedActivities);
+
     const payload = {
       activities: updatedActivities,
       userId: userId,
@@ -67,6 +72,7 @@ const ToDo: FC = () => {
     setActivitiesMutation(payload, {
       onSuccess: () => {
         setTodaysActivities(newItems);
+        // setActivities(updatedActivities);
         setAlert({
           color: "success",
           message: "Activity completed!",

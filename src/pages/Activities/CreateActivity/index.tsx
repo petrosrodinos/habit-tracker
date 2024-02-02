@@ -100,7 +100,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
       description: "",
       counter: 0,
       created: new Date().toISOString(),
-      days,
+      days: days.map((day) => ({ ...day })),
       completed: false,
     };
   }
