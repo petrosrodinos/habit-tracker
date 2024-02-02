@@ -74,6 +74,7 @@ const emptyActivity: Activity = {
   counter: 0,
   created: new Date().toISOString(),
   days: days,
+  completed: false,
 };
 
 interface CreateActivityProps {
@@ -91,6 +92,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   const { mutate: setActivitiesMutation, isLoading: isSetting } = useMutation(setActivities);
 
   useEffect(() => {
+    console.log("ACTIVITY", activity);
     if (activity) {
       setNewActivity(activity);
     } else {

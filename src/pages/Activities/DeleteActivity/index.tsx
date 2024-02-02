@@ -48,6 +48,7 @@ const DeleteActivity: FC<DeleteActivityProps> = ({ isOpen, activity, onClose }) 
           {
             text: "Cancel",
             role: "cancel",
+            handler: onClose,
           },
           {
             text: "DELETE",
@@ -56,7 +57,6 @@ const DeleteActivity: FC<DeleteActivityProps> = ({ isOpen, activity, onClose }) 
             handler: handleDeleteActivity,
           },
         ]}
-        onDidDismiss={onClose}
       ></IonAlert>
       <IonToast
         isOpen={!!alert}
