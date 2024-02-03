@@ -104,6 +104,15 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   const handleCreate = () => {
     if (!validateForm()) return;
 
+    const nameExist = activities.find((a) => a.name === newActivity.name);
+    if (nameExist) {
+      setAlert({
+        color: "danger",
+        message: "Activity name already exist",
+      });
+      return false;
+    }
+
     const payload = {
       activities: [...activities, newActivity],
       userId: userId,
@@ -151,15 +160,6 @@ const CreateActivity: FC<CreateActivityProps> = ({ activity, isOpen, onClose }) 
   const validateForm = () => {
     const enabledDays = newActivity.days.filter((day) => day.enabled === true);
     // const hasTime = enabledDays.find((day) => day.time !== "");
-
-    const nameExist = activities.find((a) => a.name === newActivity.name);
-    if (nameExist) {
-      setAlert({
-        color: "danger",
-        message: "Activity name already exist",
-      });
-      return false;
-    }
 
     if (newActivity.name === "" || enabledDays.length == 0) {
       setAlert({

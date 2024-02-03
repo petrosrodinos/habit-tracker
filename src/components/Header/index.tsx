@@ -21,13 +21,9 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ title }) => {
-  const { emptyActivities, todaysActivities } = activityStore();
+  const { emptyActivities, todaysActivities, completedActivities } = activityStore();
   const location = useHistory();
   const { avatar, logOut } = authStore((state) => state);
-
-  const completedActivities = useMemo(() => {
-    return todaysActivities.filter((activity) => activity.completed).length;
-  }, [todaysActivities]);
 
   const handleLogOut = () => {
     logOut();
@@ -41,7 +37,7 @@ const Header: FC<HeaderProps> = ({ title }) => {
       <IonToolbar>
         <IonTitle>{title}</IonTitle>
         <IonText slot="start">
-          {completedActivities}/{todaysActivities.length}
+          {completedActivities.length}/{todaysActivities.length}
         </IonText>
         <IonButtons slot="end">
           <IonFab slot="fixed" vertical="top" horizontal="end" edge={true}>

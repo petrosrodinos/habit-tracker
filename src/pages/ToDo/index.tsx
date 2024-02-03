@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useMemo, useEffect } from "react";
 import {
   IonContent,
   IonPage,
@@ -24,33 +24,44 @@ import "./style.css";
 
 const ToDo: FC = () => {
   const { userId } = authStore();
-  const { activities, todaysActivities, setTodaysActivities, setActivities } = activityStore();
-  const { mutate: setActivitiesMutation, isLoading: isSetting } = useMutation(setActivitiesDB);
+  const {
+    activities,
+    todaysActivities,
+    setTodaysActivities,
+    setCompletedActivities,
+    completedActivities,
+  } = activityStore();
+  const { mutate: setActivitiesMutation } = useMutation(setActivitiesDB);
   const [alert, setAlert] = useState<Alert>();
 
   useEffect(() => {
     setTodaysActivities();
   }, [activities]);
 
-  // useEffect(() => {
-  //   console.log("todaysActivities", todaysActivities);
-  // }, [todaysActivities]);
-
   function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
     const draggedItem = todaysActivities.splice(event.detail.from, 1)[0];
     todaysActivities.splice(event.detail.to, 0, draggedItem);
-    // console.log("ads", todaysActivities.slice());
     // setTodaysActivities(todaysActivities.slice());
     event.detail.complete();
   }
 
-  function handleItemCompleted(item: Activity) {
+  function handleItemCompleted(e: any, item: Activity) {
     const newItems = todaysActivities.map((activity) => {
       if (activity.id === item.id) {
         return { ...activity, completed: !activity.completed };
       }
       return activity;
     });
+
+    const selectedActivity = activities.find((activity) => activity.id === item.id);
+
+    if (selectedActivity) {
+      if (e.detail.checked) {
+        setCompletedActivities([...completedActivities, selectedActivity.id]);
+      } else {
+        setCompletedActivities(completedActivities.filter((id) => id !== selectedActivity.id));
+      }
+    }
 
     const updatedActivities = activities.map((activity) => {
       if (activity.id === item.id) {
@@ -63,8 +74,6 @@ const ToDo: FC = () => {
       return activity;
     });
 
-    console.log("updatedActivities", updatedActivities);
-
     const payload = {
       activities: updatedActivities,
       userId: userId,
@@ -72,7 +81,6 @@ const ToDo: FC = () => {
     setActivitiesMutation(payload, {
       onSuccess: () => {
         setTodaysActivities(newItems);
-        // setActivities(updatedActivities);
         setAlert({
           color: "success",
           message: "Activity completed!",
@@ -86,6 +94,10 @@ const ToDo: FC = () => {
       },
     });
   }
+
+  const isCompleted = useMemo(() => {
+    return (activity: Activity) => completedActivities.includes(activity.id);
+  }, [completedActivities]);
 
   return (
     <IonPage>
@@ -104,7 +116,7 @@ const ToDo: FC = () => {
               <IonItem key={index}>
                 <IonReorder slot="start"></IonReorder>
                 <div>
-                  <IonLabel className={`${item.completed ? "item-completed" : ""}`}>
+                  <IonLabel className={`${isCompleted(item) ? "item-completed" : ""}`}>
                     {item.name}
                   </IonLabel>
                   <IonNote>{item.description}</IonNote>
@@ -112,14 +124,14 @@ const ToDo: FC = () => {
                 <IonLabel
                   // style={{ paddingLeft: 200 }}
                   slot="end"
-                  className={`${item.completed ? "item-completed" : ""}`}
+                  className={`${isCompleted(item) ? "item-completed" : ""}`}
                 >
                   {getTimeForTodaysActivity(item)}
                 </IonLabel>
                 <IonCheckbox
                   slot="end"
-                  checked={item.completed}
-                  onIonChange={() => handleItemCompleted(item)}
+                  checked={isCompleted(item)}
+                  onIonChange={(e: any) => handleItemCompleted(e, item)}
                 />
               </IonItem>
             ))}
