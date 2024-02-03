@@ -33,7 +33,7 @@ export const activityStore = create<ActivityState>()(
           set({ activities: payload });
         },
         emptyActivities: () => {
-          set({ activities: [], todaysActivities: [], completedActivities: [] });
+          set({ activities: [], todaysActivities: [] });
         },
         addActivity: (payload: Activity) => {
           const activities = [...activityStore.getState().activities, payload];

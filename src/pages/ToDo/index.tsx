@@ -27,9 +27,10 @@ const ToDo: FC = () => {
   const {
     activities,
     todaysActivities,
+    completedActivities,
+    setActivities,
     setTodaysActivities,
     setCompletedActivities,
-    completedActivities,
   } = activityStore();
   const { mutate: setActivitiesMutation } = useMutation(setActivitiesDB);
   const [alert, setAlert] = useState<Alert>();
@@ -46,13 +47,6 @@ const ToDo: FC = () => {
   }
 
   function handleItemCompleted(e: any, item: Activity) {
-    const newItems = todaysActivities.map((activity) => {
-      if (activity.id === item.id) {
-        return { ...activity, completed: !activity.completed };
-      }
-      return activity;
-    });
-
     const selectedActivity = activities.find((activity) => activity.id === item.id);
 
     if (selectedActivity) {
@@ -65,7 +59,7 @@ const ToDo: FC = () => {
 
     const updatedActivities = activities.map((activity) => {
       if (activity.id === item.id) {
-        if (!item.completed) {
+        if (e.detail.checked) {
           activity.counter = activity.counter + 1;
         } else {
           activity.counter = activity.counter - 1;
@@ -80,7 +74,7 @@ const ToDo: FC = () => {
     };
     setActivitiesMutation(payload, {
       onSuccess: () => {
-        setTodaysActivities(newItems);
+        setActivities(updatedActivities);
         setAlert({
           color: "success",
           message: "Activity completed!",
@@ -139,7 +133,7 @@ const ToDo: FC = () => {
         </IonList>
         <br />
         <br />
-        <IonList>
+        {/* <IonList>
           {todaysActivities
             .filter((item) => item.completed)
             .map((item, index) => (
@@ -147,7 +141,7 @@ const ToDo: FC = () => {
                 <IonLabel>{item.name}</IonLabel>
               </IonItem>
             ))}
-        </IonList>
+        </IonList> */}
       </IonContent>
     </IonPage>
   );

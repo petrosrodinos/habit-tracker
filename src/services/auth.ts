@@ -6,17 +6,13 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { app } from "../utils/firebase";
-import { addNewUser } from "./user";
 
 const auth = getAuth(app);
 
 onAuthStateChanged(auth, (user) => {
   if (!user) {
-    console.log("User is not logged in");
     return undefined;
   }
-
-  // addNewUser(user);
   return undefined;
 });
 
